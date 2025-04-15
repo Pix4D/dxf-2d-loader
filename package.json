@@ -1,11 +1,11 @@
 {
-    "name": "dxf-viewer",
+    "name": "dxf-2d-loader",
     "version": "1.0.42",
-    "description": "JavaScript DXF file viewer",
+    "description": "JavaScript DXF 2d file viewer",
     "main": "src/index.js",
-    "author": "Artyom Lebedev<artyom.lebedev@gmail.com>",
+    "author": "Pix4d SA",
     "license": "MPL-2.0",
-    "repository": "https://github.com/vagran/dxf-viewer",
+    "repository": "https://github.com/Pix4d/dxf-2d-loader",
     "type": "module",
     "keywords": [
         "dxf",
@@ -19,8 +19,7 @@
         "src",
         "README.md",
         "LICENSE",
-        "CONTRIBUTORS",
-        "CONTRIBUTING.md"
+        "CONTRIBUTORS"
     ],
     "dependencies": {
         "loglevel": "^1.9.1",
