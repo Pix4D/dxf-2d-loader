@@ -1,6 +1,6 @@
 {
     "name": "dxf-2d-loader",
-    "version": "1.0.42",
+    "version": "1.0.42+pix4d",
     "description": "JavaScript DXF 2d file viewer",
     "main": "src/index.js",
     "author": "Pix4d SA",
