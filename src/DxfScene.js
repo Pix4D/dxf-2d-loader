@@ -1,15 +1,15 @@
-import { DynamicBuffer, NativeType } from "./DynamicBuffer.js"
-import { BatchingKey } from "./BatchingKey.js"
+import earcut from "earcut"
 import { Matrix3, Vector2 } from "three"
-import { TextRenderer, ParseSpecialChars, HAlign, VAlign } from "./TextRenderer.js"
-import { RBTree } from "./RBTree.js"
+import { BatchingKey } from "./BatchingKey.js"
+import { DynamicBuffer, NativeType } from "./DynamicBuffer.js"
+import { HatchCalculator, HatchStyle } from "./HatchCalculator.js"
+import { LinearDimension } from "./LinearDimension.js"
 import { MTextFormatParser } from "./MTextFormatParser.js"
 import dimStyleCodes from "./parser/DimStyleCodes.js"
-import { LinearDimension } from "./LinearDimension.js"
-import { HatchCalculator, HatchStyle } from "./HatchCalculator.js"
 import { LookupPattern, Pattern } from "./Pattern.js"
 import "./patterns/index.js"
-import earcut from "earcut"
+import { RBTree } from "./RBTree.js"
+import { HAlign, ParseSpecialChars, TextRenderer, VAlign } from "./TextRenderer.js"
 
 
 /** Use 16-bit indices for indexed geometry. */
@@ -136,7 +136,7 @@ export class DxfScene {
             }
         }
 
-        if (dxf.tables && dxf.tables.style) {
+        if (dxf.tables && dxf.tables.style && dxf.tables.style.styles) {
             for (const [, style] of Object.entries(dxf.tables.style.styles)) {
                 this.fontStyles.set(style.styleName, style);
             }
@@ -235,6 +235,10 @@ export class DxfScene {
                 ret = await this.textRenderer.FetchFonts(ParseSpecialChars(entity.text))
 
             } else if (entity.type === "MTEXT") {
+                if (!entity.text) {
+                    return
+                }
+
                 const parser = new MTextFormatParser()
                 parser.Parse(entity.text)
                 ret = true
@@ -864,9 +868,9 @@ export class DxfScene {
     }
 
     *_DecomposeText(entity, blockCtx) {
-        if (!this.textRenderer.canRender) {
-            return
-        }
+        if (!this.textRenderer.canRender || !this._IsMTextEntityValid(entity, blockCtx)) {
+             return
+         }
         const layer = this._GetEntityLayer(entity, blockCtx)
         const color = this._GetEntityColor(entity, blockCtx)
         const style = this._GetEntityTextStyle(entity)
@@ -1617,6 +1621,14 @@ export class DxfScene {
                              lineType,
                              shape
                          })
+    }
+
+    /** @return {?boolean} with MText entity validity */
+    _IsMTextEntityValid(entity, blockCtx = null) {
+        if (blockCtx) {
+            return null
+        }
+        return entity.attachmentPoint && entity.position && entity.color
     }
 
     /** Mirror entity vertices if necessary in case of extrusionDirection with negative Z specified.
