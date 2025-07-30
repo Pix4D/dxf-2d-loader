@@ -35,18 +35,23 @@ export class DxfViewer {
 
         this.scene = new three.Scene()
 
-        try {
-            this.renderer = new three.WebGLRenderer({
-                alpha: options.canvasAlpha,
-                premultipliedAlpha: options.canvasPremultipliedAlpha,
-                antialias: options.antialias,
-                depth: false,
-                preserveDrawingBuffer: options.preserveDrawingBuffer
-            })
-        } catch (e) {
-            console.log("Failed to create renderer: " + e)
-            this.renderer = null
-            return
+       this.ownsRenderer = !options.renderer
+       this.renderer = options.renderer
+
+       if(!this.renderer) {
+           try {
+               this.renderer = new three.WebGLRenderer({
+                   alpha: options.canvasAlpha,
+                   premultipliedAlpha: options.canvasPremultipliedAlpha,
+                   antialias: options.antialias,
+                   depth: false,
+                   preserveDrawingBuffer: options.preserveDrawingBuffer
+                })
+            } catch (e) {
+                console.log("Failed to create renderer: " + e)
+                this.renderer = null
+                return
+            }
         }
         const renderer = this.renderer
         /* Prevent bounding spheres calculations which fails due to non-conventional geometry
@@ -317,7 +322,9 @@ export class DxfViewer {
         }
         this.simplePointMaterial = null
         this.simpleColorMaterial = null
-        this.renderer.dispose()
+        if(this.ownsRenderer) {
+            this.renderer.dispose()
+        }
         this.renderer = null
     }
 
@@ -724,7 +731,12 @@ DxfViewer.DefaultOptions = {
      * be a subject for future changes. The specified value should be suitable for passing as
      * `TextDecoder` constructor `label` parameter.
      */
-    fileEncoding: "utf-8"
+    fileEncoding: "utf-8",
+    /**
+     * @type {three.WebGLRenderer | undefined | null} If specified, the renderer will be used instead of creating a new one.
+     * Multiple instances of DxfViewer can share the same renderer, this can allows to have many viewers active on the same page.
+     */
+    renderer: undefined
 }
 
 DxfViewer.SetupWorker = function () {
