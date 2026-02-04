@@ -249,6 +249,7 @@ export class DxfViewer {
 
     Render() {
         this._EnsureRenderer()
+        this.renderer.clear();
         this.renderer.render(this.scene, this.camera)
     }
 
