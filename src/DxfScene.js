@@ -24,11 +24,11 @@ const SPLINE_SUBDIVISION = 4
 /** Limit hatch lines number to some reasonable value to mitigate hanging and out-of-memory issues
  * on bad files.
  */
-const MAX_HATCH_LINES = 20000
+const MAX_HATCH_LINES = 10000
 /** Limit hatch segments number per line to some reasonable value to mitigate hanging and
  * out-of-memory issues on bad files.
  */
-const MAX_HATCH_SEGMENTS = 20000
+const MAX_HATCH_SEGMENTS = 10000
 
 
 /** Default values for system variables. Entry may be either value or function to call for obtaining
